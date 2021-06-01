@@ -199,6 +199,27 @@ class DecisionTreeMVMC():
 			branches.append(selected_rows.values.tolist())
 		return branches
 
+	def partition_for_categorical(self,data,attribute,unique_values,features):
+
+		unique_values_list = list(unique_values)
+
+		branches = []
+		for value in unique_values_list:
+			selected_rows = []
+			for item in np.asarray(data):
+				if value in item[attribute]:
+					selected_rows.append(list(item))
+			branches.append(list(selected_rows))
+		print("245")
+		print(branches)
+		return branches
+
+		# branches = []
+		# for value in unique_values_list:
+		# 	selected_rows = data.loc[value in data.iloc[:,attribute]]
+		# 	branches.append(selected_rows.values.tolist())
+		# return branches
+
 	def is_stop_node(self,branch,features):
 		# Check if branch is empty, handle it
 		unique_labels = set()
@@ -301,27 +322,31 @@ class DecisionTreeMVMC():
 				else:
 					# Assign the label set to that branch
 					node = TreeNode(is_leaf = True,label = label_set)
-		# else:
-		# 	unique_values = _
-		# 	print("303")
-		# 	print(unique_values)
-		# 	branches = self.partition_for_categorical(data,best_feature,unique_values,features)
-		# 	print("306")
-		# 	print(branches)
-		# 	features.remove(best_feature) # To avoid splitting on the same feature again
+		else:
+			unique_values = _
+			print("303")
+			print(unique_values)
+			branches = self.partition_for_categorical(data,best_feature,unique_values,features)
+			print("306")
+			print(branches)
+			print(best_feature)
+			features.remove(best_feature) # To avoid splitting on the same feature again
 
-		# 	for branch in branches:
+			branches = [x for x in branches if x]
 
-		# 		stop,label_set = self.is_stop_node(branch,features)
+			for branch in branches:
+				print("HELOOOOOOOOOOOOOOOOOO")
+				stop,label_set = self.is_stop_node(branch,features)
+				print(stop,label_set)
 
-		# 		if (not stop):
-		# 			child_node = self.recursive_build_tree(branch,features,target)
-		# 			node.children[branch] = child_node
-		# 			print(node)
-		# 		else:
-		# 			# Assign the label set to that branch
-		# 			leaf = TreeNode(is_leaf = True,label = label_set)
-		# 			print(leaf)
+				if (not stop):
+					child_node = self.recursive_build_tree(branch,features,target)
+					node.children[branch] = child_node
+					print(node)
+				else:
+					# Assign the label set to that branch
+					leaf = TreeNode(is_leaf = True,label = label_set)
+					print(leaf)
 
 		
 		return node
