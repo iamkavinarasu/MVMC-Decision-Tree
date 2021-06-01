@@ -178,7 +178,7 @@ class DecisionTreeMVMC():
 		for col in features:
 			if (is_numeric(data.iloc[0,col])): #Find if the column in the dataframe is numerical
 				data = data.sort_values(data.columns[col])
-				intervals = self.split_intervals(data.iloc[:,col])
+				intervals = [(100,224),(225,349),(350,474),(475,599),(600,724),(725,849),(850,974),(975,1099),(1100,1224),(1225,1350)] #self.split_intervals(data.iloc[:,col])
 				
 				weighted_similarity,intervals = self.compute_weighted_similarity_numerical(col,data,intervals)
 			else:
@@ -269,8 +269,8 @@ class DecisionTreeMVMC():
 		node = TreeNode(is_leaf = False,label = None,split_on_feature = best_feature)
 
 		print(data.iloc[0,best_feature])
-		if (is_numeric(data.iloc[0,best_feature])):	
-			intervals = self.split_intervals(data.iloc[:,best_feature])
+		if (is_numeric(data.iloc[0,best_feature])):	 
+			intervals = [(100,224),(225,349),(350,474),(475,599),(600,724),(725,849),(850,974),(975,1099),(1100,1224),(1225,1350)] #self.split_intervals(data.iloc[:,best_feature])
 			print("intervals:")
 			print(intervals)
 			branches = self.partition_for_numerical(data,best_feature,intervals)
@@ -282,12 +282,15 @@ class DecisionTreeMVMC():
 
 			print(features)
 
-			print("286")
+			print("285")
 			print(branches)
+			
+			branches = [x for x in branches if x]
+
+			print("291")
+			print(branches)
+
 			for i,branch in enumerate(branches):
-				if (len(branch) == 0):
-					branches.pop(i)
-					continue
 
 				stop,label_set = self.is_stop_node(branch, features)
 				print(stop,label_set)
@@ -298,15 +301,12 @@ class DecisionTreeMVMC():
 				else:
 					# Assign the label set to that branch
 					node = TreeNode(is_leaf = True,label = label_set)
-
-		print("294")
-		print(node)
-		return node
 		# else:
 		# 	unique_values = _
-		# 	print("280")
+		# 	print("303")
 		# 	print(unique_values)
 		# 	branches = self.partition_for_categorical(data,best_feature,unique_values,features)
+		# 	print("306")
 		# 	print(branches)
 		# 	features.remove(best_feature) # To avoid splitting on the same feature again
 
@@ -324,5 +324,5 @@ class DecisionTreeMVMC():
 		# 			print(leaf)
 
 		
-		
+		return node
 		
