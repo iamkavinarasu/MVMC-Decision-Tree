@@ -173,7 +173,7 @@ class DecisionTreeMVMC():
 		best_weighted_similarity = 0
 		best_feature = 0
 
-		print(features)
+		# print(features)
 
 		for col in features:
 			if (is_numeric(data.iloc[0,col])): #Find if the column in the dataframe is numerical
@@ -210,8 +210,8 @@ class DecisionTreeMVMC():
 				if value in item[attribute]:
 					selected_rows.append(list(item))
 			branches.append(list(selected_rows))
-		print("245")
-		print(branches)
+		# print("213")
+		# print(branches)
 		return branches
 
 		# branches = []
@@ -273,81 +273,85 @@ class DecisionTreeMVMC():
 					return True,large
 				else:
 					list_of_support = sorted(support.items(), key=lambda x: x[1])
-					print("251")
-					print(list_of_support)
+					# print("276")
+					# print(list_of_support)
 					return True,list_of_support[0][0]
 			else:
 				return False,None
 
 	def recursive_build_tree(self,data,features,target):
 		
-		print("262")
+		# print("284")
 		data = pd.DataFrame(data)
-		print(data)
+		# print(data)
 
 		best_weighted_similarity,best_feature, _ = self.find_best_split(data,features,target)
 
 		node = TreeNode(is_leaf = False,label = None,split_on_feature = best_feature)
+		print("291")
+		print(node)
 
-		print(data.iloc[0,best_feature])
+		# print(data.iloc[0,best_feature])
 		if (is_numeric(data.iloc[0,best_feature])):	 
 			intervals = [(100,224),(225,349),(350,474),(475,599),(600,724),(725,849),(850,974),(975,1099),(1100,1224),(1225,1350)] #self.split_intervals(data.iloc[:,best_feature])
-			print("intervals:")
-			print(intervals)
+			# print("295 intervals:")
+			# print(intervals)
 			branches = self.partition_for_numerical(data,best_feature,intervals)
 			
-			for i in branches:
-				print(i)
+			# for i in branches:
+			# 	print(i)
 
 			features.remove(best_feature) # To avoid splitting on the same feature again
 
-			print(features)
+			# print(features)
 
-			print("285")
-			print(branches)
+			# print("285")
+			# print(branches)
 			
 			branches = [x for x in branches if x]
 
-			print("291")
-			print(branches)
+			# print("291")
+			# print(branches)
 
+			print("317")
+			print(len(branches))
 			for i,branch in enumerate(branches):
 
 				stop,label_set = self.is_stop_node(branch, features)
-				print(stop,label_set)
+				# print(stop,label_set)
 
 				if (not stop):
 					child_node = self.recursive_build_tree(branch,features,target)
 					node.children[i] = child_node
 				else:
 					# Assign the label set to that branch
-					node = TreeNode(is_leaf = True,label = label_set)
-		else:
+					leaf = TreeNode(is_leaf = True,label = label_set)
+					node.children[i] = leaf
+				
+			return node
+
+		else:	
 			unique_values = _
-			print("303")
-			print(unique_values)
 			branches = self.partition_for_categorical(data,best_feature,unique_values,features)
-			print("306")
-			print(branches)
-			print(best_feature)
+			# print("330")
+			# print(branches)
+			# print(best_feature)
 			features.remove(best_feature) # To avoid splitting on the same feature again
 
 			branches = [x for x in branches if x]
 
-			for branch in branches:
-				print("HELOOOOOOOOOOOOOOOOOO")
+			for i,branch in enumerate(branches):
+				# print("HELOOOOOOOOOOOOOOOOOO")
 				stop,label_set = self.is_stop_node(branch,features)
-				print(stop,label_set)
+				# print(stop,label_set)
 
 				if (not stop):
 					child_node = self.recursive_build_tree(branch,features,target)
-					node.children[branch] = child_node
-					print(node)
+					node.children[i] = child_node
 				else:
 					# Assign the label set to that branch
 					leaf = TreeNode(is_leaf = True,label = label_set)
-					print(leaf)
+					node.children[i] = leaf
 
-		
-		return node
-		
+
+			return node
